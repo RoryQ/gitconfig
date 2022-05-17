@@ -1,0 +1,105 @@
+[url "ssh://git@github.com"]
+ 	# uncomment if you need ssh instead of https
+	#insteadOf = https://github.com
+
+[url "https://github.com"]
+ 	# uncomment if you need https instead of ssh
+	#insteadOf = git@github.com
+
+[core]
+  # create a global .gitignore file here to ignore files in all repos
+  excludesFile = ~/.gitignore
+	quotepath = false
+	whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
+	filemode = false
+
+[interactive]
+	diffFilter = delta --color-only
+
+[push]
+	default = simple
+
+[color]
+	ui = true
+
+[color "branch"]
+	current = yellow black
+	local = yellow
+	remote = magenta
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red reverse
+	new = green reverse
+	whitespace = white reverse
+
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan reverse
+	branch = magenta
+
+[alias]
+	# EOD? Thirsty? git pints then head to the pub
+	pints = push
+	
+	# Need add another change to the latest commit. git amend to rewrite latest commit to include staged changes
+	amend = commit --amend -C HEAD
+	whoops = commit --amend -C HEAD
+
+	c = commit
+	cm = commit -m
+	co = checkout
+	cp = cherry-pick
+	d = diff --no-prefix
+	dc = diff --no-prefix --cached
+
+	# fetch changes and prune deleted remote branches
+	f = fetch --prune
+	# fast forward the current branch
+	ff = merge --ff-only
+	# fetch and fast forward the current branch (use instead of git pull which makes a merge commit)
+	fff = !( git f && git ff )
+
+	# new branch
+	nb = checkout -b
+	
+	# create .gitignore if doesn't exist
+	ignore = !([ ! -e .gitignore ] && touch .gitignore) | echo $1 >> .gitignore
+
+	# pretty logs
+	l = log --pretty=format:'%C(yellow)%h%C(cyan)%d%Creset %s %C(white)- %an, %ar%Creset'
+	lg = log --graph --pretty=format:'%C(yellow)%h%C(cyan)%d%Creset %s'
+	ll = log --stat --abbrev-commit
+
+	# the force is strong with this one
+	pf = push -f
+
+	# reset author date to current date during a rebase
+	ra = commit --amend --reset-author --no-edit
+	# continue with interactive rebase
+	rc = rebase --continue
+
+	# give it a remote branch name or tag to delete (assuming remote is origin)
+	rd = push origin --delete
+
+	# short status
+	s = status --short --branch
+	track = !git branch --set-upstream-to=origin/$(git rev-parse --abbrev-ref HEAD)
+
+	# Get the current branch name (not so useful in itself, but used in
+	# other aliases)
+	branch-name = "!git rev-parse --abbrev-ref HEAD"
+
+	# Push the current branch to the remote "origin", and set it to track
+	# the upstream branch
+	publish = "!git push -u origin $(git branch-name)"
+
+	# Delete the remote version of the current branch
+	unpublish = "!git push origin :$(git branch-name)"
+
+	# Delete a branch and recreate it from master — useful if you have, say,
+	# a development branch and a master branch and they could conceivably go
+	# out of sync
+	recreate = "!f() { [[ -n $@ ]] && git checkout \"$@\" && git unpublish && git checkout master && git branch -D \"$@\" && git checkout -b \"$@\" && git publish; }; f"
