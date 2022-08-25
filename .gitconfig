@@ -1,3 +1,14 @@
+[user]
+	# Populate this with your own key from `ssh-add -L | gawk '{print $1,$2}'`
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINoMmAuAIAG27XUEBiYhpfQ7VbF1YloZtCe+dKSJNniZ
+[commit]
+	gpgsign = true
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	# Populate with email and fingerprint from `ssh-add -L | gawk '{print $3,$1,$2}'`
+	allowedSignersFile = ~/.ssh/allowed_signers
+
 [url "ssh://git@github.com"]
  	# uncomment if you need ssh instead of https
 	#insteadOf = https://github.com
